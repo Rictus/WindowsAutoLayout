@@ -20,6 +20,9 @@ class Window:
         self.enabled = not not win32gui.IsWindowEnabled(self.hwnd)
         self.isWindow = not not win32gui.IsWindow(self.hwnd)
         self.isMinimize = not not win32gui.IsIconic(self.hwnd)
+        self.application = False
+
+    def compute_application(self):
         try:
             for p in self.wmi.query('SELECT * FROM Win32_Process WHERE ProcessId = %s' % str(self.pid)):
                 self.application = {
@@ -30,7 +33,10 @@ class Window:
         except:
             pass
 
+    # Lazy loading of application data
     def get_application_name(self):
+        if self.application is False:
+            self.compute_application()
         return self.application["name"]
 
     @staticmethod
@@ -54,7 +60,7 @@ class Window:
         self.isMinimize = not not win32gui.IsIconic(self.hwnd)
 
     def is_workable(self):
-        is_it = len(self.text) > 0 \
+        return len(self.text) > 0 \
                 and self.visible \
                 and self.enabled \
                 and self.height > 0 \

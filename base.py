@@ -8,30 +8,30 @@ def write_json(data):
         json.dump(data, outfile)
 
 
-applications_exclusion_list = []
+applications_exclusion_list = [
+    "ApplicationFrameHost.exe",
+    "explorer.exe",
+    "SystemSettings.exe",
+    "Calculator.exe"
+]
 
 
-def callback(hwnd, cb):
+def callback(hwnd, windows):
     w = Window(hwnd)
     if w.is_workable():
-        cb(w)
-    else:
-        cb(False)
+        name = w.get_application_name()
+        if name not in applications_exclusion_list:
+            windows.append(w)
 
 
 def main():
-    def on_window_found(w):
-        if not w:
-            pass
-        else:
-            windows.append(w)
-
     windows = []
-    Window.iterate_windows(callback, on_window_found)
+    Window.iterate_windows(callback, windows)
+    jsons = []
     for window in windows:
-        print(window.get_application_name())
-        # if window.get_application_name() == "pycharm.exe":
-        #     window.set_geometry(0, 0, 600, 600)
+        jsons.append(window.dict_output())
+        window.set_geometry(0, 0, 600, 600)
+    write_json(jsons)
 
 
 if __name__ == '__main__':
