@@ -5,6 +5,8 @@ import win32con
 import wmi
 
 
+# TODO : Trouver sur quel ecran est la fenêtre
+# TODO : Trouver sur quel bureau virtuel est la fenêtre
 class Window:
     def __init__(self, hwnd):
         self.wmi = wmi.WMI()
@@ -61,10 +63,10 @@ class Window:
 
     def is_workable(self):
         return len(self.text) > 0 \
-                and self.visible \
-                and self.enabled \
-                and self.height > 0 \
-                and self.width > 0
+               and self.visible \
+               and self.enabled \
+               and self.height > 0 \
+               and self.width > 0
 
     def dict_output(self):
         return {
@@ -90,3 +92,15 @@ class Window:
             "text": self.text,
             "application": self.application
         }
+
+    def get_position(self):
+        return self.x, self.y
+
+    def get_dimensions(self):
+        return self.width, self.height
+
+    def get_pid(self):
+        return self.pid
+
+    def get_tid(self):
+        return self.threadId
